@@ -1,1 +1,3 @@
-# fsn
+# lastday
+
+`it's your last day?!`
