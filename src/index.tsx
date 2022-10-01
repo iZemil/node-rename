@@ -1,0 +1,1 @@
+export { rename } from './rename';
