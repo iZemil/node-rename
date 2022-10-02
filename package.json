@@ -10,7 +10,7 @@
     "author": {
         "name": "zemil"
     },
-    "bin": "cli.js",
+    "bin": "dist/cli.js",
     "private": false,
     "main": "dist/index.js",
     "repository": {
