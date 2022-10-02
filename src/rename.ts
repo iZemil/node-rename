@@ -1,28 +1,27 @@
 import * as fs from 'fs';
-import _camelCase from 'lodash.camelcase';
-import _kebabcase from 'lodash.kebabcase';
-import _lowerCase from 'lodash.lowercase';
-import _snakcase from 'lodash.snakecase';
-import _startcase from 'lodash.startcase';
-import _upperCase from 'lodash.uppercase';
+import camelcase from 'lodash.camelcase';
+import kebabcase from 'lodash.kebabcase';
+import snakcase from 'lodash.snakecase';
+import pascalcase from 'lodash.startcase';
 import * as path from 'path';
 
 import { getGlob, isDir } from './utils';
 
-export const CASE_TYPES = ['lower', 'upper', 'camel', 'pascal', 'snake', 'pascal_snake', 'kebab', 'train'] as const;
+export const CASE_TYPES = ['lower', 'upper', 'camel', 'pascal', 'snake', 'kebab', 'train', 'random'] as const;
 
 export type CaseType = typeof CASE_TYPES[number];
 
 export const clearDelimiters = (str: string) => str.replace(/[\s*_#-]/g, '');
+export const clearSpaces = (str: string) => str.replace(/\s/g, '');
 
-export const lowerCase = (str: string) => _lowerCase(str);
-export const upperCase = (str: string) => _upperCase(str);
-export const camelCase = (str: string) => _camelCase(str);
-export const pascalCase = (str: string) => _startcase(str);
-export const snakeCase = (str: string) => _snakcase(str);
-export const kebabCase = (str: string) => _kebabcase(str);
-export const pascalSnakeCase = (str: string) => pascalCase(_snakcase(str));
-export const trainCase = (str: string) => pascalCase(_kebabcase(str));
+export const lowerCase = (str: string) => str.toLowerCase();
+export const upperCase = (str: string) => str.toUpperCase();
+export const pascalCase = (str: string) => pascalcase(str);
+export const camelCase = (str: string) => camelcase(str);
+export const snakeCase = (str: string) => snakcase(str);
+export const kebabCase = (str: string) => kebabcase(str);
+export const trainCase = (str: string) => pascalCase(kebabcase(str));
+export const random = (str: string) => Math.random().toString(32).slice(2);
 
 export const rename = (caseType: CaseType) => {
     switch (caseType) {
@@ -47,8 +46,8 @@ export const rename = (caseType: CaseType) => {
         case 'train': {
             return trainCase;
         }
-        case 'pascal_snake': {
-            return pascalSnakeCase;
+        case 'random': {
+            return random;
         }
         default:
             throw new Error(`Unknown type ${caseType}`);
@@ -80,21 +79,29 @@ export const renameCli = (options: ICliOptions) => {
         return Number(isDir(bPath)) - Number(isDir(aPath));
     });
 
+    /**
+     * Renaming...
+     */
     const renameFn = rename(caseType);
-    const renamedParts = new Set<string>();
+    // old element name -> new element name
+    const renamedData = new Map<string, string>();
     foundItems.forEach((item: string) => {
         const { name, dir, ext } = path.parse(item);
 
-        const newDir = renameFn(dir);
-        const newName = renameFn(name);
+        const newDir: string[] = [];
+        const oldRenamedDir: string[] = [];
+        dir.split('/').forEach((folder) => {
+            const renamedDir = renamedData.get(folder) ?? renameFn(folder);
 
-        const oldPathRenamed: string[] = [];
-        dir.split('/').forEach((i) => {
-            oldPathRenamed.push(renamedParts.has(i) ? renameFn(i) : i);
+            oldRenamedDir.push(renamedData.get(folder) ?? folder);
+            newDir.push(renamedDir);
+            renamedData.set(folder, renamedDir);
         });
 
-        const oldPath = `${oldPathRenamed.join('/')}/${name}${ext}`;
-        const newPath = `${newDir}/${newName}${ext}`;
+        const oldPath = `${oldRenamedDir.join('/')}/${name}${ext}`;
+        const newName = renameFn(name);
+        const newPath = clearSpaces(`${newDir.join('/')}/${newName}${ext}`);
+        renamedData.set(name, newName);
 
         if (!idle) {
             try {
@@ -104,9 +111,8 @@ export const renameCli = (options: ICliOptions) => {
             }
         }
 
-        renamedParts.add(name);
         console.log(`${item} => ${newPath}`);
     });
 
-    console.log(`Renamed`);
+    console.log(`Renamed to ${caseType}.`);
 };
