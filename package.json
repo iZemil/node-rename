@@ -26,16 +26,18 @@
         "lodash.lowercase": "4.3.0",
         "lodash.snakecase": "4.1.1",
         "lodash.startcase": "4.4.0",
-        "lodash.uppercase": "4.3.0"
+        "lodash.uppercase": "4.3.0",
+        "yargs": "17.6.0"
     },
     "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "3.3.0",
-        "@types/glob": "^8.0.0",
+        "@types/glob": "8.0.0",
         "@types/jest": "27.5.2",
-        "@types/lodash.camelcase": "^4.3.7",
-        "@types/lodash.lowercase": "^4.3.7",
-        "@types/lodash.uppercase": "^4.3.7",
+        "@types/lodash.camelcase": "4.3.7",
+        "@types/lodash.lowercase": "4.3.7",
+        "@types/lodash.uppercase": "4.3.7",
         "@types/node": "16.11.47",
+        "@types/yargs": "17.0.13",
         "@typescript-eslint/eslint-plugin": "5.33.1",
         "@typescript-eslint/parser": "5.33.1",
         "eslint": "8.21.0",

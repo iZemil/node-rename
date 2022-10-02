@@ -1,6 +1,10 @@
 import * as glob from 'glob';
 
-export function getGlob(pattern = '**/*', options: glob.IOptions = { ignore: '**/node_modules/**' }): string[] {
+export const DEFAULT = {
+    ignore: 'node_modules/**',
+};
+
+export function getGlob(pattern = '**/*', options: glob.IOptions = { ignore: DEFAULT.ignore }): string[] {
     const filePaths = glob.sync(pattern, options);
 
     return filePaths;
