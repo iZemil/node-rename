@@ -1,6 +1,6 @@
 # node-rename
 
-[NodeJS package](https://www.npmjs.com/package/node-rename) with functions for renaming files/folders to 'lower', 'upper', 'camel', 'pascal', 'snake', 'kebab', 'train', 'random' case types. Also with cli support.
+Tiny [NodeJS package](https://www.npmjs.com/package/node-rename) for renaming files/folders to 'lower', 'upper', 'camel', 'pascal', 'snake', 'kebab', 'train', 'random' case types. Also with cli support.
 
 ## Installation
 
@@ -15,8 +15,23 @@
 -   node package functions:
 
 ```typescript
-import { camelCase, kebabCase, lowerCase, pascalCase, randomCase, snakeCase, trainCase, upperCase } from './rename';
+import {
+    camelCase,
+    kebabCase,
+    lowerCase,
+    nodeRename,
+    pascalCase,
+    randomCase,
+    snakeCase,
+    trainCase,
+    upperCase,
+} from 'node-rename';
 
 upperCase('some sentence!'); // "SOME SENTENCE!"
-// ...
+// ...other cases...
+nodeRename({
+    pattern: 'src/**/*.ts',
+    caseType: 'pascal',
+    idle: true,
+});
 ```

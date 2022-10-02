@@ -1,51 +1,52 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { CASE_TYPES, CaseType, clearSpaces } from './rename';
-import { rename } from './rename';
+import { CASE_TYPES, CaseType, clearSpaces, rename } from './rename';
 import { getGlob, isDir } from './utils';
 
-interface ICliOptions {
+interface Options {
     pattern: string;
     caseType: CaseType;
     ignore?: string;
     idle?: boolean;
 }
-export const renameCli = (options: ICliOptions) => {
+
+/**
+ * @returns Map old element name -> new element name
+ */
+export const nodeRename = (options: Options): Map<string, string> => {
     const { pattern, caseType, ignore, idle } = options;
+    const renamedItems = new Map<string, string>();
 
     if (!CASE_TYPES.includes(caseType)) {
         console.log(`Unknown case type ${caseType}. Select one of ${CASE_TYPES.join('|')}`);
-        return;
+        return renamedItems;
     }
 
     const foundItems: string[] = getGlob(pattern, { ignore });
     if (foundItems.length === 0) {
         console.log(`No items found for pattern: "${pattern}"`);
-        return;
+        return renamedItems;
     }
 
     /** First rename files, then folders */
-    foundItems.sort((aPath: string, bPath: string) => {
-        return Number(isDir(bPath)) - Number(isDir(aPath));
-    });
+    foundItems.sort((aPath: string, bPath: string) => Number(isDir(bPath)) - Number(isDir(aPath)));
 
     /**
      * Renaming logic...
      */
     const renameFn = rename(caseType);
-    // old element name -> new element name
-    const renamedData = new Map<string, string>();
+    const renamedNames = new Map<string, string>();
     foundItems.forEach((item: string) => {
         const { name, dir, ext } = path.parse(item);
 
         const newDir: string[] = [];
         const oldRenamedDir: string[] = [];
         dir.split('/').forEach((folder) => {
-            const renamedDir = renamedData.get(folder) ?? folder;
+            const renamedName = renamedNames.get(folder) ?? folder;
 
-            oldRenamedDir.push(renamedDir);
-            newDir.push(renamedDir);
+            oldRenamedDir.push(renamedName);
+            newDir.push(renamedName);
         });
 
         const newName = name
@@ -54,8 +55,8 @@ export const renameCli = (options: ICliOptions) => {
             .join('.');
         const newPath = clearSpaces(`${newDir.join('/')}/${newName}${ext}`);
         const oldPath = clearSpaces(`${oldRenamedDir.join('/')}/${name}${ext}`);
-        renamedData.set(name, newName);
-        console.log(`${oldPath} => ${newPath}`);
+        renamedNames.set(name, newName);
+        renamedItems.set(oldPath, newPath);
 
         const withRename = !idle;
         if (withRename) {
@@ -64,8 +65,12 @@ export const renameCli = (options: ICliOptions) => {
             } catch (err) {
                 console.log('Rename', String(err));
             }
+        } else {
+            console.log(`${oldPath} => ${newPath}`);
         }
     });
 
-    console.log(`Renamed (${renamedData.size}) to ${caseType}.`);
+    console.log(`${idle ? 'Will be renamed' : 'Renamed'} (${renamedItems.size}) to ${caseType}.`);
+
+    return renamedItems;
 };

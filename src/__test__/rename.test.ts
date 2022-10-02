@@ -1,4 +1,4 @@
-import { clearDelimiters, flatCase, upperCase } from './rename';
+import { clearDelimiters, upperCase } from '../rename';
 
 const EXAMPLES = {
     twoWords: {
@@ -27,14 +27,6 @@ describe('rename', () => {
         expect(clearDelimiters('Two-Words')).toBe('TwoWords');
     });
 
-    describe('flatCase', () => {
-        for (const str of Object.values(EXAMPLES.twoWords)) {
-            it(str, () => {
-                expect(flatCase(clearDelimiters(str))).toBe(EXAMPLES.twoWords.flat);
-            });
-        }
-    });
-
     describe('upperCase', () => {
         for (const str of Object.values(EXAMPLES.twoWords)) {
             it(str, () => {
@@ -42,4 +34,6 @@ describe('rename', () => {
             });
         }
     });
+
+    // TODO: finish tests
 });

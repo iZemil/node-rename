@@ -2,8 +2,8 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { CASE_TYPES } from './rename';
-import { renameCli } from './rename-cli';
+import { nodeRename } from './node-rename';
+import { CASE_TYPES, CaseType } from './rename';
 import { DEFAULT_GLOB } from './utils';
 
 export const runCli = () => {
@@ -32,10 +32,14 @@ export const runCli = () => {
             default: DEFAULT_GLOB.ignore,
         })
         .alias('h', 'help')
-        .alias('v', 'version').argv;
+        .alias('v', 'version').argv as {
+        pattern: string;
+        case: CaseType;
+        ignore: string;
+        idle?: boolean;
+    };
 
-    // @ts-ignore
-    renameCli({ pattern: argv.pattern, caseType: argv.case, ignore: argv.ignore, idle: argv.idle });
+    nodeRename({ pattern: argv.pattern, caseType: argv.case, ignore: argv.ignore, idle: argv.idle });
 };
 
 runCli();
