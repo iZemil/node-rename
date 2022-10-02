@@ -1,1 +1,1 @@
-export { rename } from './rename';
+export * from './rename';

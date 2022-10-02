@@ -1,47 +1,33 @@
 import * as fs from 'fs';
 import _camelCase from 'lodash.camelcase';
+import _kebabcase from 'lodash.kebabcase';
 import _lowerCase from 'lodash.lowercase';
+import _snakcase from 'lodash.snakecase';
+import _startcase from 'lodash.startcase';
 import _upperCase from 'lodash.uppercase';
 import * as path from 'path';
 
 import { getGlob, isDir } from './utils';
 
-export const CASE_TYPES = [
-    'flat',
-    'upper',
-    'camel',
-    'pascal',
-    'snake',
-    'upper_snake',
-    'camel_snake',
-    'pascal_snake',
-    'kebab',
-    'train',
-    'upper_train',
-    'terror',
-] as const;
+export const CASE_TYPES = ['lower', 'upper', 'camel', 'pascal', 'snake', 'pascal_snake', 'kebab', 'train'] as const;
 
 export type CaseType = typeof CASE_TYPES[number];
 
 export const clearDelimiters = (str: string) => str.replace(/[\s*_#-]/g, '');
 
-export const flatCase = (str: string) => str.toLowerCase() || _lowerCase(str);
-export const upperCase = (str: string) => str.toUpperCase() || _upperCase(str);
+export const lowerCase = (str: string) => _lowerCase(str);
+export const upperCase = (str: string) => _upperCase(str);
 export const camelCase = (str: string) => _camelCase(str);
-export const pascalCase = (str: string) => str;
-export const snakeCase = (str: string) => str;
-export const upperSnakeCase = (str: string) => str;
-export const camelSnakeCase = (str: string) => str;
-export const pascalSnakeCase = (str: string) => str;
-export const kebabCase = (str: string) => str;
-export const trainCase = (str: string) => str;
-export const upperTrainCase = (str: string) => str;
-export const terrorCase = (str: string) => str;
+export const pascalCase = (str: string) => _startcase(str);
+export const snakeCase = (str: string) => _snakcase(str);
+export const kebabCase = (str: string) => _kebabcase(str);
+export const pascalSnakeCase = (str: string) => pascalCase(_snakcase(str));
+export const trainCase = (str: string) => pascalCase(_kebabcase(str));
 
 export const rename = (caseType: CaseType) => {
     switch (caseType) {
-        case 'flat': {
-            return flatCase;
+        case 'lower': {
+            return lowerCase;
         }
         case 'upper': {
             return upperCase;
@@ -55,26 +41,14 @@ export const rename = (caseType: CaseType) => {
         case 'snake': {
             return snakeCase;
         }
-        case 'upper_snake': {
-            return upperSnakeCase;
-        }
-        case 'camel_snake': {
-            return camelSnakeCase;
-        }
-        case 'pascal_snake': {
-            return pascalSnakeCase;
-        }
         case 'kebab': {
             return kebabCase;
         }
         case 'train': {
             return trainCase;
         }
-        case 'upper_train': {
-            return upperTrainCase;
-        }
-        case 'terror': {
-            return terrorCase;
+        case 'pascal_snake': {
+            return pascalSnakeCase;
         }
         default:
             throw new Error(`Unknown type ${caseType}`);

@@ -1,4 +1,10 @@
 # node-rename
 
--   Cli usage `npm install node-rename -g` then `node-rename --help`
+## Installation
+
+-   Cli usage `npm install node-rename -g`
 -   Node package usage `npm install node-rename`
+
+## Usage
+
+-   Cli help with example `node-rename --help`
