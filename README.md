@@ -1,4 +1,4 @@
-# node-rename
+# node-rename &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/izemil/node-rename)
 
 Tiny [NodeJS package](https://www.npmjs.com/package/node-rename) for renaming files/folders to 'lower', 'upper', 'camel', 'pascal', 'snake', 'kebab', 'train', 'random' case types. Also with cli support.
 
@@ -7,12 +7,27 @@ Tiny [NodeJS package](https://www.npmjs.com/package/node-rename) for renaming fi
 -   Cli usage `npm i node-rename -g`
 -   Node package usage `npm i node-rename`
 
-## Usage
+## Examples
 
--   Cli help with example `node-rename --help`
--   Show files/folders without renaming them, add `--idle` flag: `node-rename --pattern "./src/**" --case upper --idle`
--   Simple cli example `node-rename --pattern "./src/**" --case kebab` (rename all files/folders in src directory to kebab case)
--   node package functions:
+Cli help to get full documentation:
+
+```bash
+node-rename --help
+```
+
+Simple cli example - rename all files/folders within src directory to kebab case:
+
+```bash
+node-rename --pattern "./src/**" --case kebab
+```
+
+Show files/folders without renaming them, add `--idle` flag:
+
+```bash
+node-rename --pattern "./src/**" --case upper --idle
+```
+
+Node package functions:
 
 ```typescript
 import {
@@ -33,5 +48,5 @@ nodeRename({
     pattern: 'src/**/*.ts',
     caseType: 'pascal',
     idle: true,
-});
+}); // Map with old -> new namings
 ```
