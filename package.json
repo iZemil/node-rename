@@ -1,5 +1,12 @@
 {
     "name": "node-rename",
+    "description": "rename files/folders to programming case types",
+    "keywords": [
+        "node-rename",
+        "node-rename-files-folders",
+        "npm-rename-package",
+        "node-rename-cli"
+    ],
     "author": {
         "name": "zemil"
     },
