@@ -12,6 +12,8 @@ export const runCli = () => {
         .describe('c', `Rename case type. Available options: ${CASE_TYPES.join('|')}`)
         .alias('p', 'pattern')
         .describe('p', 'Pattern to find folders/files')
+        .boolean('idle')
+        .describe('idle', 'Log all items without renaming')
         .alias('i', 'ignore')
         .default('i', DEFAULT_GLOB.ignore)
         .describe('i', `Ignore files/folders. Default: "${DEFAULT_GLOB.ignore}"`)
@@ -20,7 +22,7 @@ export const runCli = () => {
         .demandOption(['case', 'pattern']).argv;
 
     // @ts-ignore
-    renameCli(argv.pattern, argv.case, argv.ignore);
+    renameCli({ pattern: argv.pattern, caseType: argv.case, ignore: argv.ignore, idle: argv.idle });
 };
 
 runCli();

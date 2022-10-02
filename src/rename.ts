@@ -4,7 +4,7 @@ import _lowerCase from 'lodash.lowercase';
 import _upperCase from 'lodash.uppercase';
 import * as path from 'path';
 
-import { DEFAULT_GLOB, getGlob, isDir } from './utils';
+import { getGlob, isDir } from './utils';
 
 export const CASE_TYPES = [
     'flat',
@@ -18,6 +18,7 @@ export const CASE_TYPES = [
     'kebab',
     'train',
     'upper_train',
+    'terror',
 ] as const;
 
 export type CaseType = typeof CASE_TYPES[number];
@@ -37,20 +38,64 @@ export const trainCase = (str: string) => str;
 export const upperTrainCase = (str: string) => str;
 export const terrorCase = (str: string) => str;
 
-export const rename = (str: string, caseType: CaseType) => {
-    console.log(caseType);
-
-    return '';
+export const rename = (caseType: CaseType) => {
+    switch (caseType) {
+        case 'flat': {
+            return flatCase;
+        }
+        case 'upper': {
+            return upperCase;
+        }
+        case 'camel': {
+            return camelCase;
+        }
+        case 'pascal': {
+            return pascalCase;
+        }
+        case 'snake': {
+            return snakeCase;
+        }
+        case 'upper_snake': {
+            return upperSnakeCase;
+        }
+        case 'camel_snake': {
+            return camelSnakeCase;
+        }
+        case 'pascal_snake': {
+            return pascalSnakeCase;
+        }
+        case 'kebab': {
+            return kebabCase;
+        }
+        case 'train': {
+            return trainCase;
+        }
+        case 'upper_train': {
+            return upperTrainCase;
+        }
+        case 'terror': {
+            return terrorCase;
+        }
+        default:
+            throw new Error(`Unknown type ${caseType}`);
+    }
 };
 
-export const renameCli = (pattern: string, caseType: CaseType, ignore: string = DEFAULT_GLOB.ignore) => {
+interface ICliOptions {
+    pattern: string;
+    caseType: CaseType;
+    ignore?: string;
+    idle?: boolean;
+}
+export const renameCli = (options: ICliOptions) => {
+    const { pattern, caseType, ignore, idle } = options;
+
     if (!CASE_TYPES.includes(caseType)) {
         console.log(`Unknown case type ${caseType}. Select one of ${CASE_TYPES.join('|')}`);
         return;
     }
 
-    console.log(pattern);
-    const foundItems = getGlob(pattern, { ignore });
+    const foundItems: string[] = getGlob(pattern, { ignore });
     if (foundItems.length === 0) {
         console.log(`No items found for pattern: "${pattern}"`);
         return;
@@ -61,8 +106,7 @@ export const renameCli = (pattern: string, caseType: CaseType, ignore: string = 
         return Number(isDir(bPath)) - Number(isDir(aPath));
     });
 
-    const renameFn = upperCase;
-    const renamedMap = new Map<string, string>();
+    const renameFn = rename(caseType);
     const renamedParts = new Set<string>();
     foundItems.forEach((item: string) => {
         const { name, dir, ext } = path.parse(item);
@@ -78,16 +122,16 @@ export const renameCli = (pattern: string, caseType: CaseType, ignore: string = 
         const oldPath = `${oldPathRenamed.join('/')}/${name}${ext}`;
         const newPath = `${newDir}/${newName}${ext}`;
 
-        try {
-            fs.renameSync(oldPath, newPath);
-        } catch {
-            console.log('rename err');
+        if (!idle) {
+            try {
+                fs.renameSync(oldPath, newPath);
+            } catch {
+                console.log('rename err');
+            }
         }
 
         renamedParts.add(name);
-        renamedMap.set(item, newPath);
-
-        console.log(`${oldPath} => ${newPath}`);
+        console.log(`${item} => ${newPath}`);
     });
 
     console.log(`Renamed`);
