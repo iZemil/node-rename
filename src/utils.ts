@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as glob from 'glob';
 
 export function isDir(path: string): boolean {
     try {
@@ -9,4 +10,14 @@ export function isDir(path: string): boolean {
         // lstatSync throws an error if path doesn't exist
         return false;
     }
+}
+
+export const DEFAULT_GLOB = {
+    ignore: 'node_modules/**',
+};
+
+export function getGlob(pattern = '**/*', options: glob.IOptions = { ignore: DEFAULT_GLOB.ignore }): string[] {
+    const filePaths = glob.sync(pattern, options);
+
+    return filePaths;
 }

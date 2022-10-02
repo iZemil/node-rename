@@ -2,8 +2,8 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { DEFAULT } from './glob';
 import { CASE_TYPES, renameCli } from './rename';
+import { DEFAULT_GLOB } from './utils';
 
 export const runCli = () => {
     const argv = yargs(hideBin(process.argv))
@@ -12,12 +12,12 @@ export const runCli = () => {
         .describe('c', `Rename case type. Available options: ${CASE_TYPES.join('|')}`)
         .alias('p', 'pattern')
         .describe('p', 'Pattern to find folders/files')
-        .default('p', DEFAULT.ignore)
         .alias('i', 'ignore')
-        .describe('i', `Ignore files/folders. Default: "${DEFAULT.ignore}"`)
+        .default('i', DEFAULT_GLOB.ignore)
+        .describe('i', `Ignore files/folders. Default: "${DEFAULT_GLOB.ignore}"`)
         .alias('h', 'help')
         .alias('v', 'version')
-        .demandOption(['c', 'p']).argv;
+        .demandOption(['case', 'pattern']).argv;
 
     // @ts-ignore
     renameCli(argv.pattern, argv.case, argv.ignore);
