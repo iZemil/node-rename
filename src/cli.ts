@@ -21,11 +21,6 @@ export const runCli = () => {
             description: `Pattern to find folders/files`,
             demandOption: true,
         })
-        .option('idle', {
-            alias: 'i',
-            type: 'boolean',
-            description: 'Log all items without renaming',
-        })
         .option('ignore', {
             type: 'string',
             description: `Ignore files/folders`,
@@ -36,10 +31,9 @@ export const runCli = () => {
         pattern: string;
         case: CaseType;
         ignore: string;
-        idle?: boolean;
     };
 
-    nodeRename({ pattern: argv.pattern, caseType: argv.case, ignore: argv.ignore, idle: argv.idle });
+    nodeRename({ pattern: argv.pattern, caseType: argv.case, ignore: argv.ignore });
 };
 
 runCli();

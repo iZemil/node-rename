@@ -15,16 +15,16 @@ Cli help to get full documentation:
 node-rename --help
 ```
 
-Simple cli example - rename all files/folders within src directory to kebab case:
+Show files/folders without renaming them:
+
+```bash
+node-rename --pattern "./src/**"
+```
+
+Then if you want to rename all files/folders within src directory to kebab case add case option:
 
 ```bash
 node-rename --pattern "./src/**" --case kebab
-```
-
-Show files/folders without renaming them, add `--idle` flag:
-
-```bash
-node-rename --pattern "./src/**" --case upper --idle
 ```
 
 Node package functions:
@@ -43,10 +43,10 @@ import {
 } from 'node-rename';
 
 upperCase('some sentence!'); // "SOME SENTENCE!"
-// ...other cases...
+
+// Rename files and folders:
 nodeRename({
     pattern: 'src/**/*.ts',
-    caseType: 'pascal',
-    idle: true,
-}); // Map with old -> new namings
+    caseType: 'pascal', // caseType is optional, caseType: undefined, only returns files to rename
+});
 ```

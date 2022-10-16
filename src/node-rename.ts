@@ -8,17 +8,16 @@ interface Options {
     pattern: string;
     caseType: CaseType;
     ignore?: string;
-    idle?: boolean;
 }
 
 /**
  * @returns Map old element name -> new element name
  */
 export const nodeRename = (options: Options): Map<string, string> => {
-    const { pattern, caseType, ignore, idle } = options;
+    const { pattern, caseType, ignore } = options;
     const renamedItems = new Map<string, string>();
 
-    if (!CASE_TYPES.includes(caseType)) {
+    if (caseType && !CASE_TYPES.includes(caseType)) {
         console.log(`Unknown case type ${caseType}. Select one of ${CASE_TYPES.join('|')}`);
         return renamedItems;
     }
@@ -31,6 +30,11 @@ export const nodeRename = (options: Options): Map<string, string> => {
 
     /** First rename files, then folders */
     foundItems.sort((aPath: string, bPath: string) => Number(isDir(bPath)) - Number(isDir(aPath)));
+
+    if (!caseType) {
+        console.log(foundItems);
+        return new Map(foundItems.map((item) => [item, item]));
+    }
 
     /**
      * Renaming logic...
@@ -58,19 +62,14 @@ export const nodeRename = (options: Options): Map<string, string> => {
         renamedNames.set(name, newName);
         renamedItems.set(oldPath, newPath);
 
-        const withRename = !idle;
-        if (withRename) {
-            try {
-                fs.renameSync(oldPath, newPath);
-            } catch (err) {
-                console.log('Rename', String(err));
-            }
-        } else {
-            console.log(`${oldPath} => ${newPath}`);
+        try {
+            fs.renameSync(oldPath, newPath);
+        } catch (err) {
+            console.log('Rename', String(err));
         }
     });
 
-    console.log(`${idle ? 'Will be renamed' : 'Renamed'} (${renamedItems.size}) to ${caseType}.`);
+    console.log(`Renamed: ${renamedItems.size}) to ${caseType}.`);
 
     return renamedItems;
 };
