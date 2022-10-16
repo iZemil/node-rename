@@ -6,19 +6,21 @@ import { getGlob, isDir } from './utils';
 
 interface Options {
     pattern: string;
-    caseType: CaseType;
+    type?: CaseType;
+    handler?: (text: string) => string;
     ignore?: string;
+    log?: boolean;
 }
 
 /**
  * @returns Map old element name -> new element name
  */
 export const nodeRename = (options: Options): Map<string, string> => {
-    const { pattern, caseType, ignore } = options;
+    const { pattern, type, ignore, log, handler } = options;
     const renamedItems = new Map<string, string>();
 
-    if (caseType && !CASE_TYPES.includes(caseType)) {
-        console.log(`Unknown case type ${caseType}. Select one of ${CASE_TYPES.join('|')}`);
+    if (type && !CASE_TYPES.includes(type)) {
+        console.log(`Unknown case type ${type}. Select one of ${CASE_TYPES.join('|')}`);
         return renamedItems;
     }
 
@@ -31,15 +33,16 @@ export const nodeRename = (options: Options): Map<string, string> => {
     /** First rename files, then folders */
     foundItems.sort((aPath: string, bPath: string) => Number(isDir(bPath)) - Number(isDir(aPath)));
 
-    if (!caseType) {
-        console.log(foundItems);
+    if (!type && !handler) {
+        console.log(foundItems.join('\n'));
+        console.log(`Found by pattern: ${foundItems.length} items.`);
         return new Map(foundItems.map((item) => [item, item]));
     }
 
     /**
      * Renaming logic...
      */
-    const renameFn = rename(caseType);
+    const renameFn = handler ?? rename(type ?? 'lower');
     const renamedNames = new Map<string, string>();
     foundItems.forEach((item: string) => {
         const { name, dir, ext } = path.parse(item);
@@ -62,14 +65,24 @@ export const nodeRename = (options: Options): Map<string, string> => {
         renamedNames.set(name, newName);
         renamedItems.set(oldPath, newPath);
 
-        try {
-            fs.renameSync(oldPath, newPath);
-        } catch (err) {
-            console.log('Rename', String(err));
+        if (log) {
+            console.log(`${oldPath} => ${newPath}`);
+        } else {
+            try {
+                fs.renameSync(oldPath, newPath);
+            } catch (err) {
+                console.log('Rename', String(err));
+            }
         }
     });
 
-    console.log(`Renamed: ${renamedItems.size}) to ${caseType}.`);
+    const finishWords = (start: string) => `${start} ${renamedItems.size} items to ${type ?? 'custom renamer'}.`;
+
+    if (log) {
+        console.log(finishWords(`Will be renamed:`));
+    } else {
+        console.log(finishWords(`Renamed:`));
+    }
 
     return renamedItems;
 };

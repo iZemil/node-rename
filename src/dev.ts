@@ -19,11 +19,11 @@ console.log('kebabCase:', kebabCase('some sentence!'));
 console.log('trainCase:', trainCase('some sentence!'));
 console.log('randomCase:', randomCase());
 
-// @cli check: yarn build && node ./dist/cli.js -p "./temp/common/**" --case kebab --idle
-console.log(
-    nodeRename({
-        pattern: 'src/**/*.ts',
-        caseType: 'pascal',
-        idle: true,
-    })
-);
+// @cli check: yarn build && node ./dist/cli.js --pattern "./temp/common/**" --type kebab
+nodeRename({
+    pattern: 'src/dev/rename/**',
+    handler: (text) => {
+        return text.replace('day', '');
+    },
+    log: true,
+});

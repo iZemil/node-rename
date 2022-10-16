@@ -18,8 +18,8 @@ export const kebabCase = (str: string) => kebabcase(str);
 export const trainCase = (str: string) => pascalCase(kebabcase(str));
 export const randomCase = () => Math.random().toString(32).slice(2);
 
-export const rename = (caseType: CaseType) => {
-    switch (caseType) {
+export const rename = (type: CaseType) => {
+    switch (type) {
         case 'lower': {
             return lowerCase;
         }
@@ -45,6 +45,6 @@ export const rename = (caseType: CaseType) => {
             return randomCase;
         }
         default:
-            throw new Error(`Unknown type ${caseType}`);
+            throw new Error(`Unknown type ${type}`);
     }
 };

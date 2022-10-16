@@ -7,7 +7,7 @@ Tiny [NodeJS package](https://www.npmjs.com/package/node-rename) for renaming fi
 -   Cli usage `npm i node-rename -g`
 -   Node package usage `npm i node-rename`
 
-## Examples
+## CLI Examples
 
 Cli help to get full documentation:
 
@@ -15,7 +15,7 @@ Cli help to get full documentation:
 node-rename --help
 ```
 
-Show files/folders without renaming them:
+Show files/folders by pattern without renaming them:
 
 ```bash
 node-rename --pattern "./src/**"
@@ -24,29 +24,57 @@ node-rename --pattern "./src/**"
 Then if you want to rename all files/folders within src directory to kebab case add case option:
 
 ```bash
-node-rename --pattern "./src/**" --case kebab
+node-rename --pattern "./src/**" --type kebab
 ```
 
-Node package functions:
+Add "--log" option to see renaming result without renaming
+
+```bash
+node-rename --pattern "./src/**" --type kebab --log
+```
+
+### Custom renaming handler
+
+Create javascript file:
+
+```javascript
+// handler.js
+module.exports = function (text) {
+    // any logic with renaming
+    return text.replace('-', '');
+};
+```
+
+Then run it:
+
+```bash
+node-rename --pattern "./src/**" --handler "./handler.js" --log
+```
+
+## Node package usage
+
+Case type functions:
 
 ```typescript
-import {
-    camelCase,
-    kebabCase,
-    lowerCase,
-    nodeRename,
-    pascalCase,
-    randomCase,
-    snakeCase,
-    trainCase,
-    upperCase,
-} from 'node-rename';
+import { camelCase, kebabCase, lowerCase, pascalCase, randomCase, snakeCase, trainCase, upperCase } from 'node-rename';
 
 upperCase('some sentence!'); // "SOME SENTENCE!"
+```
 
-// Rename files and folders:
+Rename files and folders:
+
+```typescript
+import { nodeRename } from 'node-rename';
+
 nodeRename({
     pattern: 'src/**/*.ts',
-    caseType: 'pascal', // caseType is optional, caseType: undefined, only returns files to rename
+    type: 'pascal', // type is optional, type: undefined, only returns files to rename
+});
+
+// Or cusom rename handler
+nodeRename({
+    pattern: 'src/**/*.ts',
+    // your renamer function
+    handler: (name: string) => name.replace('-', ''),
 });
 ```
