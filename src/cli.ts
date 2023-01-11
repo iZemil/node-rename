@@ -1,11 +1,23 @@
 #!/usr/bin/env node
+import * as fs from 'fs/promises';
 import * as path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
+import { CONFIG_PATH } from './consts';
 import { nodeRename } from './node-rename';
 import { CASE_TYPES, CaseType } from './rename';
 import { DEFAULT_GLOB } from './utils';
+
+export const initConfig = async () => {
+    try {
+        await fs.copyFile(path.resolve(__dirname, `default.js`), CONFIG_PATH);
+
+        console.log(`Configuration file was created:\n> ${CONFIG_PATH}`);
+    } catch (e) {
+        console.error(e);
+    }
+};
 
 interface ICli {
     pattern: string;
@@ -18,6 +30,9 @@ interface ICli {
 export const runCli = async () => {
     const argv = yargs(hideBin(process.argv))
         .usage('Usage: node-rename --pattern "./src/**/*.ts" --type [camel|upper|...]')
+        .command('init', 'Create config file', (args) => {
+            initConfig();
+        })
         .option('pattern', {
             alias: 'p',
             type: 'string',

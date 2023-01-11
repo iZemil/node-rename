@@ -21,9 +21,7 @@ console.log('randomCase:', randomCase());
 
 // @cli check: yarn build && node ./dist/cli.js --pattern "./temp/common/**" --type kebab
 nodeRename({
-    pattern: 'src/dev/rename/**',
-    config: (text) => {
-        return text.replace('day', '');
-    },
+    pattern: 'temp/easy/**',
+    type: 'kebab',
     log: true,
 });

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { CASE_TYPES, CaseType, clearSpaces, rename } from './rename';
+import { CASE_TYPES, CaseType, rename } from './rename';
 import { getGlob, isDir } from './utils';
 
 interface Options {
@@ -60,8 +60,8 @@ export const nodeRename = (options: Options): Map<string, string> => {
             .split('.')
             .map((it) => renameFn(it))
             .join('.');
-        const newPath = clearSpaces(`${newDir.join('/')}/${newName}${ext}`);
-        const oldPath = clearSpaces(`${oldRenamedDir.join('/')}/${name}${ext}`);
+        const newPath = `${newDir.join('/')}/${newName}${ext}`;
+        const oldPath = `${oldRenamedDir.join('/')}/${name}${ext}`;
         renamedNames.set(name, newName);
         renamedItems.set(oldPath, newPath);
 
@@ -71,7 +71,7 @@ export const nodeRename = (options: Options): Map<string, string> => {
             try {
                 fs.renameSync(oldPath, newPath);
             } catch (err) {
-                console.log('Rename', String(err));
+                console.log(err);
             }
         }
     });
