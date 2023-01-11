@@ -73,7 +73,8 @@ export const nodeRename = (options: Options): Map<string, string> => {
         }
     });
 
-    const finishWords = (start: string) => `${start} ${renamedItems.size} items to ${type ?? 'custom renamer'}.`;
+    const finishWords = (start: string) =>
+        `${start} ${renamedItems.size} items to ${type ?? 'custom renamer handler'}.`;
 
     if (log) {
         console.log(finishWords(`Will be renamed:`));
