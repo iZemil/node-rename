@@ -33,12 +33,20 @@ Add "--log" option to see renaming result without renaming
 node-rename --pattern "./src/**" --type kebab --log
 ```
 
+<<<<<<< HEAD
 ### Custom renaming config
+=======
+### Custom renaming handler
+>>>>>>> master
 
 Create javascript file:
 
 ```javascript
+<<<<<<< HEAD
 // config.js
+=======
+// handler.js
+>>>>>>> master
 module.exports = function (text) {
     // any logic with renaming
     return text.replace('-', '');
@@ -48,7 +56,11 @@ module.exports = function (text) {
 Then run it:
 
 ```bash
+<<<<<<< HEAD
 node-rename --pattern "./src/**" --config "./config.js" --log
+=======
+node-rename --pattern "./src/**" --handler "./handler.js" --log
+>>>>>>> master
 ```
 
 ## Node package usage
@@ -71,10 +83,18 @@ nodeRename({
     type: 'pascal', // type is optional, type: undefined, only returns files to rename
 });
 
+<<<<<<< HEAD
 // Or cusom rename config
 nodeRename({
     pattern: 'src/**/*.ts',
     // your renamer function
     config: (name: string) => name.replace('-', ''),
+=======
+// Or cusom rename handler
+nodeRename({
+    pattern: 'src/**/*.ts',
+    // your renamer function
+    handler: (name: string) => name.replace('-', ''),
+>>>>>>> master
 });
 ```
