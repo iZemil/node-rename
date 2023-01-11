@@ -7,12 +7,12 @@ import { nodeRename } from './node-rename';
 import { CASE_TYPES, CaseType } from './rename';
 import { DEFAULT_GLOB } from './utils';
 
-interface ICliOptions {
+interface ICli {
     pattern: string;
     type?: CaseType;
     ignore?: string;
     log?: boolean;
-    handler?: string;
+    config?: string;
 }
 
 export const runCli = async () => {
@@ -38,24 +38,24 @@ export const runCli = async () => {
             type: 'boolean',
             description: 'Log all items without renaming',
         })
-        .option('handler', {
+        .option('config', {
             type: 'string',
-            description: 'Custom renaming handler path',
+            description: 'Custom renaming config path',
         })
         .alias('h', 'help')
-        .alias('v', 'version').argv as ICliOptions;
+        .alias('v', 'version').argv as ICli;
 
-    const { pattern, type, ignore, log, handler } = argv;
+    const { pattern, type, ignore, log, config } = argv;
 
-    if (handler) {
-        const handlerPath = path.resolve(handler);
+    if (config) {
+        const handlerPath = path.resolve(config);
 
         try {
             // eslint-disable-next-line
             const handlerFn = require(handlerPath);
-            console.log('handler', handlerFn(''));
+            console.log('config', handlerFn(''));
 
-            nodeRename({ pattern, ignore, log, handler: handlerFn });
+            nodeRename({ pattern, ignore, log, config: handlerFn });
         } catch (e) {
             console.log(`Handler error: ${handlerPath}`);
         }
