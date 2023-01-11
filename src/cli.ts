@@ -20,6 +20,7 @@ export const initConfig = async () => {
 };
 
 interface ICli {
+    _: string[];
     pattern: string;
     type?: CaseType;
     ignore?: string;
@@ -61,20 +62,22 @@ export const runCli = async () => {
         .alias('v', 'version').argv as ICli;
 
     const { pattern, type, ignore, log, config } = argv;
+    const needRename = argv._.length === 0;
+    if (needRename) {
+        if (config !== undefined) {
+            const handlerPath = path.resolve(config || CONFIG_PATH);
 
-    if (config !== undefined) {
-        const handlerPath = path.resolve(config || CONFIG_PATH);
+            try {
+                // eslint-disable-next-line
+                const config = require(handlerPath);
 
-        try {
-            // eslint-disable-next-line
-            const config = require(handlerPath);
-
-            nodeRename({ pattern, ignore, log, handler: config.handler });
-        } catch (e) {
-            console.log(`Handler error: ${handlerPath}`);
+                nodeRename({ pattern, ignore, log, handler: config.handler });
+            } catch (e) {
+                console.log(`Handler error: ${handlerPath}`);
+            }
+        } else {
+            nodeRename({ pattern, type, ignore, log });
         }
-    } else {
-        nodeRename({ pattern, type, ignore, log });
     }
 };
 
