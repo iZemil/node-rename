@@ -1,4 +1,6 @@
-"use strict";
-module.exports = function (text) {
-    return text;
+'use strict';
+module.exports = {
+    handler: function (text) {
+        return text.replace(/\d+\./gi, '');
+    },
 };

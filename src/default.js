@@ -1,3 +1,5 @@
-module.exports = function (text) {
-    return text;
+module.exports = {
+    handler: function (text) {
+        return text;
+    },
 };

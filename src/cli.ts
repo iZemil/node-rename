@@ -37,7 +37,7 @@ export const runCli = async () => {
             alias: 'p',
             type: 'string',
             description: `Pattern to find folders/files`,
-            demandOption: true,
+            default: './**/*',
         })
         .option('type', {
             alias: 'c',
@@ -62,15 +62,14 @@ export const runCli = async () => {
 
     const { pattern, type, ignore, log, config } = argv;
 
-    if (config) {
-        const handlerPath = path.resolve(config);
+    if (config !== undefined) {
+        const handlerPath = path.resolve(config || CONFIG_PATH);
 
         try {
             // eslint-disable-next-line
-            const handlerFn = require(handlerPath);
-            console.log('config', handlerFn(''));
+            const config = require(handlerPath);
 
-            nodeRename({ pattern, ignore, log, config: handlerFn });
+            nodeRename({ pattern, ignore, log, handler: config.handler });
         } catch (e) {
             console.log(`Handler error: ${handlerPath}`);
         }

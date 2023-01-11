@@ -7,7 +7,7 @@ import { getGlob, isDir } from './utils';
 interface Options {
     pattern: string;
     type?: CaseType;
-    config?: (text: string) => string;
+    handler?: (text: string) => string;
     ignore?: string;
     log?: boolean;
 }
@@ -16,7 +16,7 @@ interface Options {
  * @returns Map old element name -> new element name
  */
 export const nodeRename = (options: Options): Map<string, string> => {
-    const { pattern, type, ignore, log, config } = options;
+    const { pattern, type, ignore, log, handler } = options;
     const renamedItems = new Map<string, string>();
 
     if (type && !CASE_TYPES.includes(type)) {
@@ -33,7 +33,7 @@ export const nodeRename = (options: Options): Map<string, string> => {
     /** First rename files, then folders */
     foundItems.sort((aPath: string, bPath: string) => Number(isDir(bPath)) - Number(isDir(aPath)));
 
-    if (!type && !config) {
+    if (!type && !handler) {
         console.log(foundItems.join('\n'));
         console.log(`Found by pattern: ${foundItems.length} items.`);
         return new Map(foundItems.map((item) => [item, item]));
@@ -42,7 +42,7 @@ export const nodeRename = (options: Options): Map<string, string> => {
     /**
      * Renaming logic...
      */
-    const renameFn = config ?? rename(type ?? 'lower');
+    const renameFn = handler ?? rename(type ?? 'upper');
     const renamedNames = new Map<string, string>();
     foundItems.forEach((item: string) => {
         const { name, dir, ext } = path.parse(item);
@@ -56,10 +56,7 @@ export const nodeRename = (options: Options): Map<string, string> => {
             newDir.push(renamedName);
         });
 
-        const newName = name
-            .split('.')
-            .map((it) => renameFn(it))
-            .join('.');
+        const newName = renameFn(name);
         const newPath = `${newDir.join('/')}/${newName}${ext}`;
         const oldPath = `${oldRenamedDir.join('/')}/${name}${ext}`;
         renamedNames.set(name, newName);

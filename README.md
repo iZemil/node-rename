@@ -35,20 +35,12 @@ node-rename --pattern "./src/**" --type kebab --log
 
 ### Custom renaming config
 
-Create javascript file:
-
-```javascript
-// config.js
-module.exports = function (text) {
-    // any logic with renaming
-    return text.replace('-', '');
-};
-```
-
-Then run it:
+1. Init config file `node-rename init`
+2. Set up config file
+3. Run the config:
 
 ```bash
-node-rename --pattern "./src/**" --config "./config.js" --log
+node-rename --pattern "./src/**" --config "./rename.config.js" --log
 ```
 
 ## Node package usage
